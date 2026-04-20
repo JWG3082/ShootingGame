@@ -48,6 +48,7 @@ public class PlayerController : MonoBehaviour
     // public static event Action<T1, T2, ... T16> ActionMethod;
     // Action은 애초에 델리게이트에서 만들어진 명령어
     public static event Action OnPlayerDead;
+    // 아 더 공부하고싶다.
     
     // 춤 관련해서 넣을 음원 소스
     // private AudioSource _source;
