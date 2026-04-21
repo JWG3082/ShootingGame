@@ -2,7 +2,7 @@ using Unity.Cinemachine;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class Barrel : MonoBehaviour
+public class Barrel : MonoBehaviour, IDamagable
 {
    // 예습용 코드
    // private Rigidbody _rb;
@@ -35,23 +35,28 @@ public class Barrel : MonoBehaviour
       _renderer = GetComponent<MeshRenderer>();
    }
    
-   private void OnCollisionEnter(Collision coll)
+   // private void OnCollisionEnter(Collision coll)
+   // {
+   //    if (coll.collider.CompareTag(TAG_BULLET))
+   //    {
+   //      
+   //    }
+   // }
+
+   public void Damage(float hit)
    {
-      if (coll.collider.CompareTag(TAG_BULLET))
+      // 데미지 증가
+      //_hitCount += (int)hit;
+      // 내가 직접 설정하는 머테리얼 효과
+      if (++_hitCount >= 3)
       {
-         // 데미지 증가
-         //_hitCount++;
-         // 내가 직접 설정하는 머테리얼 효과
-         if (++_hitCount >= 3)
-         {
-            ExpBarrel();
-         }
-         // 폭발 부과효과 메소드
-         SetEmmision();
-         //Invoke("Explode", 0.1f);
+         ExpBarrel();
       }
+      // 폭발 부과효과 메소드
+      SetEmmision();
+      //Invoke("Explode", 0.1f);
    }
-   
+
    //
    // void Explode()
    // {
@@ -90,6 +95,8 @@ public class Barrel : MonoBehaviour
          rb.mass = 1.0f;
          rb.AddExplosionForce(_barrelDataSo.force,  expPos, _barrelDataSo.radius, _barrelDataSo.upwardForce);
          //barrel.Explode(expPos);
+         // 몬스터 데미지 주기
+         //coll.gameObject.GetComponent<IDamagable>().Damage(50f);
       }
       Explode(expPos);
    }

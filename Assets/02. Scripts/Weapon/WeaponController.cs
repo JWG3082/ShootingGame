@@ -28,49 +28,12 @@ public class WeaponController : MonoBehaviour
     // 총쏠때 Emission 효과주기
     [SerializeField] private MeshRenderer _gunRenderer;
 
+    [SerializeField] private LayerMask _fireMask;
+    
     // 오디오 소스
     private AudioSource _audio;
     private float _nextFire;
-
-    #region 총알 발사 로직
-
-    private void FireBullet()
-    {
-        // Lagacy InputManager 사용한 방법
-        // if (Input.GetMouseButtonDown(0))
-        // {
-        //     // 총 발사 로직
-        //     Instantiate(_bulletPrefab, _firePos.position, _firePos.rotation);
-        // }
-
-        // New InputSystem 사용한 방법
-        if (Mouse.current.leftButton.isPressed)
-            if (Time.time > _nextFire)
-            {
-                _nextFire = Time.time + _fireRate;
-                //Instantiate(_bulletPrefab, _firePos.position, _firePos.rotation);
-                
-                // 풀에서 사용가능한 총알을 꺼내오기
-                var bullet = BulletPool.Instance.Get();
-                bullet.Fire(_firePos.position, _firePos.rotation);
-                
-                //GameObject bullet = ObjectPool._instance.SetActiveOBJ();
-                //bullet.transform.position = _firePos.position;
-                //bullet.transform.rotation = _firePos.rotation;
-                //Debug.Log(bullet.transform.rotation.eulerAngles);
-                // 여기서 Impulse 사용
-                _fireImpulseSource.GenerateImpulse();
-                // 음원 재생
-                // _audio.Play("이름");
-                // _audioSource.PlayOneShot(AudioClip, 볼륨);
-                _audio.PlayOneShot(_fireSfx, 0.8f);
-                // 총구 화염 효과
-                StartCoroutine(ShowMuzzleFlash());
-            }
-    }
-
-    #endregion
-
+    
     // 페비쵸비 이제 새로운 스크립트 제작으로 비활성화
     // [SerializeField] private Animator _phoebeAnimator;
     // private readonly int _hashFire = Animator.StringToHash("IsFire");
@@ -103,6 +66,7 @@ public class WeaponController : MonoBehaviour
     private void Update()
     {
         FireBullet();
+        //Debug.DrawRay(_firePos.position, 10f * _firePos.forward, Color.green);
     }
 
     #endregion
@@ -122,6 +86,50 @@ public class WeaponController : MonoBehaviour
      *  Co-routine (코루틴) - 언밀히 멀티스레드는 아니다. 멀티스레드처럼 사용할 수 있게 도와주는 방법
      */
 
+    #region 총알 발사 로직
+
+    private void FireBullet()
+    {
+        // Lagacy InputManager 사용한 방법
+        // if (Input.GetMouseButtonDown(0))
+        // {
+        //     // 총 발사 로직
+        //     Instantiate(_bulletPrefab, _firePos.position, _firePos.rotation);
+        // }
+
+        // New InputSystem 사용한 방법
+        if (Mouse.current.leftButton.isPressed)
+            if (Time.time > _nextFire)
+            {
+                _nextFire = Time.time + _fireRate;
+                //Instantiate(_bulletPrefab, _firePos.position, _firePos.rotation);
+                
+                // 풀에서 사용가능한 총알을 꺼내오기
+                //var bullet = BulletPool.Instance.Get();
+                //bullet.Fire(_firePos.position, _firePos.rotation);
+                
+                //GameObject bullet = ObjectPool._instance.SetActiveOBJ();
+                //bullet.transform.position = _firePos.position;
+                //bullet.transform.rotation = _firePos.rotation;
+                //Debug.Log(bullet.transform.rotation.eulerAngles);
+                // 여기서 Impulse 사용
+                _fireImpulseSource.GenerateImpulse();
+                // 음원 재생
+                // _audio.Play("이름");
+                // _audioSource.PlayOneShot(AudioClip, 볼륨);
+                _audio.PlayOneShot(_fireSfx, 0.8f);
+                // 총구 화염 효과
+                StartCoroutine(ShowMuzzleFlash());
+                if (Physics.Raycast(_firePos.position, _firePos.forward, out RaycastHit hit, 10.0f,  _fireMask))
+                {
+                    //Debug.Log($"hit : {hit.collider.name}");
+                    hit.collider.GetComponent<IDamagable>()?.Damage(25f);
+                }
+            }
+    }
+
+    #endregion
+    
     #region 총알 발사 효과
 
     private IEnumerator ShowMuzzleFlash()

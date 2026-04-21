@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.AI;
 
-public class MonsterController : MonoBehaviour
+public class MonsterController : MonoBehaviour, IDamagable
 {
    // 몬스터 상태 정의 (Enum)
    public enum MonsterState
@@ -88,19 +88,24 @@ public class MonsterController : MonoBehaviour
    
    private void OnCollisionEnter(Collision coll)
    {
-      if (coll.collider.CompareTag("BULLET"))
+      if (!_isDead && coll.collider.CompareTag("BULLET"))
       {
-         Destroy(coll.gameObject);
-         _animator.SetTrigger(_hashHit);
-         _hp -= 10.0f;
-         if (_hp <= 0.0f)
-         {
-            _MonsterState = MonsterState.DEAD;
-         }
-         else
-         {
-            StartCoroutine(CheckColorState());
-         }
+         //Destroy(coll.gameObject);
+         BulletPool.Instance.Return(coll.gameObject.GetComponent<Bullet>());
+      }
+   }
+
+   public void Damage(float hit)
+   {
+      _animator.SetTrigger(_hashHit);
+      _hp -= hit;
+      if (_hp <= 0.0f)
+      {
+         _MonsterState = MonsterState.DEAD;
+      }
+      else
+      {
+         StartCoroutine(CheckColorState());
       }
    }
    
