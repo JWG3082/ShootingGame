@@ -16,16 +16,6 @@ public class Bullet : MonoBehaviour
         _rb = GetComponent<Rigidbody>();
         _trail = GetComponent<TrailRenderer>();
     }
-    
-    // 예습 코드
-    // void OnCollisionEnter(Collision collision)
-    // {
-    //     if (collision.gameObject.CompareTag("Wall"))
-    //     {
-    //         Destroy(gameObject, 1f);
-    //     }
-    // }
-    
     #endregion
 
     #region MyRegion

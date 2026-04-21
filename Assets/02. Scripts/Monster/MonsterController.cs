@@ -96,7 +96,6 @@ public class MonsterController : MonoBehaviour
          _hp -= 10.0f;
          if (_hp <= 0.0f)
          {
-            ToggleColliders(false);
             _MonsterState = MonsterState.DEAD;
          }
          else
