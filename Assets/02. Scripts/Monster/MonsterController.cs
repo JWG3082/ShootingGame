@@ -66,7 +66,6 @@ public class MonsterController : MonoBehaviour
       _animator = GetComponent<Animator>();
       //_colliders = GetComponentsInChildren<Collider>();
       _renderer = GetComponentsInChildren<SkinnedMeshRenderer>();
-      
       // 콜라이더 값 미리 저장
       _monsterTr.GetComponentsInChildren<Collider>(_colliders);
    }
@@ -205,6 +204,11 @@ public class MonsterController : MonoBehaviour
                _MonsterState = MonsterState.IDLE;
                _isDead = false;
                ToggleColliders(true);
+               for (int i = 0; i < _renderer.Length; i++)
+               {
+                  _material = _renderer[i].material;
+                  _renderer[i].material.SetColor("_SpecColor", Color.gray);
+               }
                // 오브젝트 풀링으로 변환
                MonsterPool.instance.pool.Release(this);
                break;
