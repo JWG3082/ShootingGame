@@ -16,29 +16,7 @@ public class Bullet : MonoBehaviour
         _rb = GetComponent<Rigidbody>();
         _trail = GetComponent<TrailRenderer>();
     }
-
-    private void OnEnable()
-    {
-        // 혹시 모르니 다시 한번 재 초기화.
-        _rb.linearVelocity= Vector3.zero;
-        _rb.angularVelocity = Vector3.zero;
-        // 뉴튼(n) 총이 나가지는 명령어
-        _rb.AddRelativeForce(Vector3.forward * _force);
-        // 예습 코드
-        
-        // 불렛 자체적인 시간 제한
-        Invoke("DestroyBullet", 30f);
-    }
     
-    private void OnDisable()
-    {
-        // 초기화
-        _rb.linearVelocity= Vector3.zero;
-        _rb.angularVelocity = Vector3.zero;
-        _trail.Clear();
-        CancelInvoke();
-    }
-
     // 예습 코드
     // void OnCollisionEnter(Collision collision)
     // {
@@ -52,10 +30,20 @@ public class Bullet : MonoBehaviour
 
     #region MyRegion
 
-    void DestroyBullet()
+    public void Fire(Vector3 pos, Quaternion rot)
     {
-        Destroy(gameObject);
-        //ObjectPool._instance.DisAbleBullet(this.gameObject);
+        transform.SetPositionAndRotation(pos, rot);
+        
+        // 물리 속성 초기화
+        _rb.linearVelocity = _rb.angularVelocity = Vector3.zero;
+        _rb.rotation = rot;
+        
+        // 트레일 렌더러 초기화
+        _trail.Clear();
+        
+        // 뉴튼(N)
+        _rb.AddRelativeForce(Vector3.forward * _force);
     }
+
     #endregion
 }

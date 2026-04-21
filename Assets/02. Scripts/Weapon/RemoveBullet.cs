@@ -38,7 +38,10 @@ public class RemoveBullet : MonoBehaviour
         Destroy(spark, 0.5f);
 
         // 충돌한 게임오브젝트
-        Destroy(coll.gameObject);
+        //Destroy(coll.gameObject);
+        
+        // 풀에 환원하는 코드
+        BulletPool.Instance.Return(coll.gameObject.GetComponent<Bullet>());
         //ObjectPool._instance.DisAbleBullet(coll.gameObject);
     }
 }

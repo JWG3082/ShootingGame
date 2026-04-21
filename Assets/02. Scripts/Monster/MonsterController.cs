@@ -50,7 +50,7 @@ public class MonsterController : MonoBehaviour
    private WaitForSeconds _ws;
    
    // 내가 다시 한번 추가한 변수
-   private bool _isEster = false;
+   // private bool _isEster = false;
    
    // 몬스터의 모든 콜라이더 저장할 컬랙션
    private List<Collider> _colliders = new List<Collider>(); // new();
@@ -193,12 +193,21 @@ public class MonsterController : MonoBehaviour
                _isDead = true;
                _agent.isStopped = true;
                _animator.SetTrigger(_hashDead);
-               // TODO: 오브젝트 풀링으로 변환
+               ToggleColliders(false);
                for (int i = 0; i < _renderer.Length; i++)
                {
                   _material = _renderer[i].material;
                   _renderer[i].material.SetColor("_SpecColor", Color.red);
                }
+               // 잠시 대기 후 처리
+               yield return new WaitForSeconds(2f);
+               // 원래 값 설정
+               _hp = 100f;
+               _MonsterState = MonsterState.IDLE;
+               _isDead = false;
+               ToggleColliders(true);
+               // 오브젝트 풀링으로 변환
+               MonsterPool.instance.pool.Release(this);
                break;
          }
          yield return _ws;

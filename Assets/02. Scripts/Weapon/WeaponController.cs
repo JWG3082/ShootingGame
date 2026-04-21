@@ -48,7 +48,12 @@ public class WeaponController : MonoBehaviour
             if (Time.time > _nextFire)
             {
                 _nextFire = Time.time + _fireRate;
-                Instantiate(_bulletPrefab, _firePos.position, _firePos.rotation);
+                //Instantiate(_bulletPrefab, _firePos.position, _firePos.rotation);
+                
+                // 풀에서 사용가능한 총알을 꺼내오기
+                var bullet = BulletPool.Instance.Get();
+                bullet.Fire(_firePos.position, _firePos.rotation);
+                
                 //GameObject bullet = ObjectPool._instance.SetActiveOBJ();
                 //bullet.transform.position = _firePos.position;
                 //bullet.transform.rotation = _firePos.rotation;
